@@ -4,19 +4,28 @@ const ops = document.querySelectorAll('.op');
 let display = document.getElementById('results');
 let opIsSelected = false;
 let opSelected = '';
-let num = 0;
+let num1 = '';
+let num2 = '';
 let result = 0;
+let opAgain = false;
 
 document.addEventListener('load', addListener());
 
 function addListener() {
     for(i=0; i<nums.length; i++) {
         nums[i].addEventListener('click', (event) => {
+            if (result != 0 && opIsSelected == false) {
+                clear();
+            }
             if(opIsSelected){
-                display.innerText = event.srcElement.innerText;
-                opIsSelected = false;
+                if(num2 == 0){
+                    num2 = '';
+                }
+                num2 += event.srcElement.innerText;
+                display.innerText = num2;
             } else {
-                display.innerText += event.srcElement.innerText;
+                num1 += event.srcElement.innerText;
+                display.innerText = num1;
             }
             
         })
@@ -26,7 +35,7 @@ function addListener() {
     }
 
     document.getElementById('clear').addEventListener('click', clear);
-    document.getElementById('equal').addEventListener('click', equate);
+    document.getElementById('equal').addEventListener('click', equals);
 }
 
 function getNum() {
@@ -34,39 +43,54 @@ function getNum() {
 }
 
 function operator() {
-    
     if(display.innerText == ''){
         opIsSelected = false;
     } else {
          opIsSelected = true;
-         opSelected = event.srcElement.innerText;
-
-         num = getNum();
+         if(result != 0){
+            num1 = result.toString();
+         }
          
+         if(num2 != ''){
+            equate(num1, num2);
+            num1 = result;
+            result = 0;
+         } else {
+            num2 = 0;
+         }
+         opSelected = event.srcElement.innerText;
     }
 }
 
-function equate(){
+function equate(firstNum, secNum){
     if(opSelected == '+'){
-        result = parseFloat(num) + parseFloat(getNum());
+        result = parseFloat(firstNum) + parseFloat(secNum);
         display.innerText = result;
     } else if(opSelected == '-') {
-        result = parseFloat(num) - parseFloat(getNum());
+        result = parseFloat(firstNum) - parseFloat(secNum);
         display.innerText = result;
     } else if(opSelected == '*') {
-        result = parseFloat(num) * parseFloat(getNum());
+        result = parseFloat(firstNum) * parseFloat(secNum);
         display.innerText = result;
     } else if(opSelected == '/') {
-        result = parseFloat(num) / parseFloat(getNum());
+        result = parseFloat(firstNum) / parseFloat(secNum);
         display.innerText = result;
     } else {
-        display.innerHTML = getNum();
+        display.innerText = getNum();
     }
+    num2 = '';
+}
+
+function equals(){
+    equate(num1, num2);
+    opIsSelected = false;
+    opSelected = '';
 }
 
 function clear(){
     display.innerText = '';
     opIsSelected = false;
     result = 0;
-    num = 0;
+    num1 = '';
+    num2 = '';
 }
